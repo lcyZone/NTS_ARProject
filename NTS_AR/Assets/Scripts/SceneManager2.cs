@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using TMPro;
 
 
 
@@ -16,6 +17,9 @@ public class M : MonoBehaviour
     private InputAction touchPosAction;
     private List<GameObject> instantiatedCubes;
     public List<Material> Materials;
+    private InputAction touchPhaseAction;
+    [SerializeField] private TMP_Text countText;
+    private int cubeCount;
 
 
 
@@ -30,9 +34,10 @@ public class M : MonoBehaviour
             Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
             GameObject cube = Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
             instantiatedCubes.Add(cube);
+            cubeCount += 1;
+            countText.text = "Cubes: " + cubeCount;
         }
-        
-
+       
 
     }
 
@@ -41,7 +46,8 @@ public class M : MonoBehaviour
         touchPressAction = PlayerInput.actions["TouchPress"];
         touchPosAction = PlayerInput.actions["TouchPos"];
         instantiatedCubes = new List<GameObject>();
-        
+        touchPhaseAction = PlayerInput.actions["TouchPhase"];
+        cubeCount = 0;
     }
 
 
@@ -50,6 +56,14 @@ public class M : MonoBehaviour
         if (touchPressAction.WasPerformedThisFrame())
         {
             OnTouch();
+        }
+        if (touchPressAction.WasPerformedThisFrame())
+        {
+            var touchPhase = touchPhaseAction.ReadValue<UnityEngine.InputSystem.TouchPhase>();
+            if (touchPhase == UnityEngine.InputSystem.TouchPhase.Began)
+            {
+                OnTouch();
+            }
         }
     }
     public void ChangeColor()
