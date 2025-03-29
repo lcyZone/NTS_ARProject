@@ -14,6 +14,9 @@ public class M : MonoBehaviour
     public PlayerInput PlayerInput;
     private InputAction touchPressAction;
     private InputAction touchPosAction;
+    private List<GameObject> instantiatedCubes;
+    public List<Material> Materials;
+
 
 
     private void OnTouch()
@@ -25,7 +28,10 @@ public class M : MonoBehaviour
         {
             ARRaycastHit firstHit = hits[0];
             Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
+            GameObject cube = Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
+            instantiatedCubes.Add(cube);
         }
+        
 
 
     }
@@ -34,9 +40,11 @@ public class M : MonoBehaviour
     {
         touchPressAction = PlayerInput.actions["TouchPress"];
         touchPosAction = PlayerInput.actions["TouchPos"];
+        instantiatedCubes = new List<GameObject>();
+        
     }
 
-    
+
     void Update()
     {
         if (touchPressAction.WasPerformedThisFrame())
@@ -44,4 +52,14 @@ public class M : MonoBehaviour
             OnTouch();
         }
     }
+    public void ChangeColor()
+    {
+        foreach (GameObject cube in instantiatedCubes)
+        {
+            int randomIndex = Random.Range(0, Materials.Count);
+            Material randomMaterial = Materials[randomIndex];
+            cube.GetComponent<MeshRenderer>().material = randomMaterial;
+        }
+    }
+
 }
