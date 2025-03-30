@@ -1999,6 +1999,7 @@ MonoBehaviour:
   timerText: {fileID: 997439471}
   Rank: {fileID: 854831041}
   arPlaneManager: {fileID: 676843791}
+  ParticleEffect: {fileID: 4516788667741418535, guid: 37053c263eeea194690022ed5afb7b19, type: 3}
 --- !u!4 &1893682216
 Transform:
   m_ObjectHideFlags: 0

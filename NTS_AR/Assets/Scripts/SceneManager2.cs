@@ -6,6 +6,7 @@ using UnityEngine.XR.ARSubsystems;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.InputSystem.HID;
 
 
 
@@ -17,7 +18,6 @@ public class M : MonoBehaviour
     public PlayerInput PlayerInput;
     private InputAction touchPressAction;
     private InputAction touchPosAction;
-    private List<GameObject> instantiatedCubes;
     public List<Material> Materials;
     private InputAction touchPhaseAction;
     [SerializeField] private TMP_Text countText;
@@ -29,6 +29,10 @@ public class M : MonoBehaviour
     public TMP_Text timerText;
     public TMP_Text Rank;
     public ARPlaneManager arPlaneManager;
+    public GameObject ParticleEffect;
+    private Vector2 touchPos;
+    private RaycastHit hit;
+    private Camera cam;
 
     IEnumerator SpawnCubes()
     {
@@ -61,7 +65,6 @@ public class M : MonoBehaviour
         gameActive = true;
         touchPressAction = PlayerInput.actions["TouchPress"];
         touchPosAction = PlayerInput.actions["TouchPos"];
-        instantiatedCubes = new List<GameObject>();
         touchPhaseAction = PlayerInput.actions["TouchPhase"];
         score = 0;
         StartCoroutine(SpawnCubes());
@@ -70,19 +73,24 @@ public class M : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == UnityEngine.TouchPhase.Began)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-            RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+        if (!touchPressAction.WasPerformedThisFrame())
+        {
+            return;
+        }
+
+        touchPos = touchPosAction.ReadValue<Vector2>();
+        Ray ray = cam.ScreenPointToRay(touchPos);
+        if (Physics.Raycast(ray, out hit))
+        {
+            GameObject hitObj = hit.collider.gameObject;
+            if (hitObj.tag == "Cube")
             {
-                if (hit.collider.CompareTag("Cube")) 
-                {
-                    Destroy(hit.collider.gameObject);
-                    score = score + 10;
-                    countText.text = "Score: " + score;
-                }
+                var clone = Instantiate(ParticleEffect, hitObj.transform.position, Quaternion.identity);
+                clone.transform.localScale = hitObj.transform.localScale;
+                Destroy(hitObj);
+                score = score + 10;
+                countText.text = "Score: " + score;
             }
         }
 
