@@ -5,6 +5,7 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 
@@ -20,63 +21,80 @@ public class M : MonoBehaviour
     public List<Material> Materials;
     private InputAction touchPhaseAction;
     [SerializeField] private TMP_Text countText;
-    private int cubeCount;
+    private int score;
+    public float spawnInterval = 3f; 
+    private bool gameActive = true;
+    public GameObject gameOverPanel;
+    private float timeLeft = 30f;
+    public TMP_Text timerText;
 
+    
 
-
-    private void OnTouch()
+    Vector3 GetRandomPlanePosition()
     {
-        var touchPos = touchPosAction.ReadValue<Vector2>();
-        List<ARRaycastHit> hits = new List<ARRaycastHit>();
-        RaycastManager.Raycast(touchPos, hits, TypeToTrack);
-        if (hits.Count > 0)
-        {
-            ARRaycastHit firstHit = hits[0];
-            Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
-            GameObject cube = Instantiate(PrefabToInstantiate, firstHit.pose.position, firstHit.pose.rotation);
-            instantiatedCubes.Add(cube);
-            cubeCount += 1;
-            countText.text = "Cubes: " + cubeCount;
-        }
-       
-
+        return new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
     }
+
+    IEnumerator SpawnCubes()
+    {
+        while (gameActive)
+        {
+            Vector3 spawnPosition = GetRandomPlanePosition();
+            Instantiate(PrefabToInstantiate, spawnPosition, Quaternion.identity);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+
 
     void Start()
     {
+        gameActive = true;
         touchPressAction = PlayerInput.actions["TouchPress"];
         touchPosAction = PlayerInput.actions["TouchPos"];
         instantiatedCubes = new List<GameObject>();
         touchPhaseAction = PlayerInput.actions["TouchPhase"];
-        cubeCount = 0;
+        score = 0;
     }
 
 
     void Update()
     {
-        if (touchPressAction.WasPerformedThisFrame())
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == UnityEngine.TouchPhase.Began)
         {
-            OnTouch();
-        }
-        if (touchPressAction.WasPerformedThisFrame())
-        {
-            var touchPhase = touchPhaseAction.ReadValue<UnityEngine.InputSystem.TouchPhase>();
-            if (touchPhase == UnityEngine.InputSystem.TouchPhase.Began)
+            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
             {
-                OnTouch();
+                if (hit.collider.CompareTag("Cube")) 
+                {
+                    Destroy(hit.collider.gameObject);
+                    score++;
+                    countText.text = "Score: " + score;
+                }
+            }
+        }
+
+        if (gameActive)
+        {
+            timeLeft -= Time.deltaTime;
+            timerText.text = "Time: " + Mathf.CeilToInt(timeLeft);
+
+            if (timeLeft <= 0)
+            {
+                EndGame();
             }
         }
     }
-    public void ChangeColor()
+
+    void EndGame()
     {
-        foreach (GameObject cube in instantiatedCubes)
-        {
-            int randomIndex = Random.Range(0, Materials.Count);
-            Material randomMaterial = Materials[randomIndex];
-            cube.GetComponent<MeshRenderer>().material = randomMaterial;
-        }
+        gameActive = false;
+        gameOverPanel.SetActive(true);
     }
 
+    
     public void Menu()
     {
         SceneManager.LoadScene("Menu");
