@@ -1997,6 +1997,8 @@ MonoBehaviour:
   spawnInterval: 3
   gameOverPanel: {fileID: 957976655}
   timerText: {fileID: 997439471}
+  Rank: {fileID: 854831041}
+  arPlaneManager: {fileID: 676843791}
 --- !u!4 &1893682216
 Transform:
   m_ObjectHideFlags: 0

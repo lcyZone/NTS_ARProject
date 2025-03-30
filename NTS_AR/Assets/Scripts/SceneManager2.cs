@@ -12,7 +12,7 @@ using System.Collections;
 public class M : MonoBehaviour
 {
     public ARRaycastManager RaycastManager;
-    public TrackableType TypeToTrack = TrackableType.PlaneWithinBounds;
+    public TrackableType TypeToTrack = TrackableType.PlaneWithinBounds; 
     public GameObject PrefabToInstantiate;
     public PlayerInput PlayerInput;
     private InputAction touchPressAction;
@@ -27,22 +27,31 @@ public class M : MonoBehaviour
     public GameObject gameOverPanel;
     private float timeLeft = 30f;
     public TMP_Text timerText;
-
-    
-
-    Vector3 GetRandomPlanePosition()
-    {
-        return new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
-    }
+    public TMP_Text Rank;
+    public ARPlaneManager arPlaneManager;
 
     IEnumerator SpawnCubes()
     {
         while (gameActive)
         {
-            Vector3 spawnPosition = GetRandomPlanePosition();
-            Instantiate(PrefabToInstantiate, spawnPosition, Quaternion.identity);
+            SpawnCubeOnRandomPlane();
             yield return new WaitForSeconds(spawnInterval);
         }
+    }
+    void SpawnCubeOnRandomPlane()
+    {
+        List<ARPlane> planes = new List<ARPlane>();
+        foreach (var plane in arPlaneManager.trackables)
+        {
+            planes.Add(plane);
+        }
+
+        if (planes.Count == 0) return; 
+        ARPlane randomPlane = planes[Random.Range(0, planes.Count)];
+        Vector3 spawnPosition = randomPlane.transform.position;
+        spawnPosition.y += 0.05f; 
+
+        Instantiate(PrefabToInstantiate, spawnPosition, Quaternion.identity);
     }
 
 
@@ -55,6 +64,7 @@ public class M : MonoBehaviour
         instantiatedCubes = new List<GameObject>();
         touchPhaseAction = PlayerInput.actions["TouchPhase"];
         score = 0;
+        StartCoroutine(SpawnCubes());
     }
 
 
@@ -70,7 +80,7 @@ public class M : MonoBehaviour
                 if (hit.collider.CompareTag("Cube")) 
                 {
                     Destroy(hit.collider.gameObject);
-                    score++;
+                    score = score + 10;
                     countText.text = "Score: " + score;
                 }
             }
@@ -91,6 +101,30 @@ public class M : MonoBehaviour
     void EndGame()
     {
         gameActive = false;
+        if (score == 0)
+        {
+           Rank.text = "what.";
+        }
+        else if(score> 0 && score <= 50)
+        {
+            Rank.text = "youre pretty bad...";
+        }
+        else if (score >50  && score <= 70)
+        {
+            Rank.text = "not bad";
+        }
+        else if (score > 70 && score <= 90)
+        {
+            Rank.text = "youre good!";
+        }
+        else if (score > 90 && score < 100)
+        {
+            Rank.text = "Amazing !!!";
+        }
+        else
+        {
+            Rank.text = "You are THE block destroyer.";
+        }
         gameOverPanel.SetActive(true);
     }
 
