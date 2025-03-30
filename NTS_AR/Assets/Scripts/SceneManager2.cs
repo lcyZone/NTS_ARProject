@@ -79,7 +79,7 @@ public class M : MonoBehaviour
 
     public void Menu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Menu");
     }
 
     public void Retry()
