@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2592a916ac7c894495b15feb0f2dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParticleEffect: {fileID: 0}
+  ParticleEffect: {fileID: 4516788667741418535, guid: 37053c263eeea194690022ed5afb7b19, type: 3}
   playerInput: {fileID: 1943829437}
 --- !u!1 &1052780613
 GameObject:
