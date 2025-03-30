@@ -1305,10 +1305,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1650538180}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -211, y: -1244}
-  m_SizeDelta: {x: 610.0803, y: 221.9962}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 64, y: 339}
+  m_SizeDelta: {x: 1102.3998, y: 209.7899}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &997439471
 MonoBehaviour:
@@ -1359,7 +1359,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 198.7
+  m_fontSize: 187.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1395,7 +1395,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 16.275024, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2000,6 +2000,7 @@ MonoBehaviour:
   Rank: {fileID: 854831041}
   arPlaneManager: {fileID: 676843791}
   ParticleEffect: {fileID: 4516788667741418535, guid: 37053c263eeea194690022ed5afb7b19, type: 3}
+  cam: {fileID: 260835368}
 --- !u!4 &1893682216
 Transform:
   m_ObjectHideFlags: 0

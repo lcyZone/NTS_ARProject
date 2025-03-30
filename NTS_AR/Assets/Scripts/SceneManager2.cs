@@ -6,7 +6,7 @@ using UnityEngine.XR.ARSubsystems;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using UnityEngine.InputSystem.HID;
+
 
 
 
@@ -19,7 +19,6 @@ public class M : MonoBehaviour
     private InputAction touchPressAction;
     private InputAction touchPosAction;
     public List<Material> Materials;
-    private InputAction touchPhaseAction;
     [SerializeField] private TMP_Text countText;
     private int score;
     public float spawnInterval = 3f; 
@@ -32,7 +31,7 @@ public class M : MonoBehaviour
     public GameObject ParticleEffect;
     private Vector2 touchPos;
     private RaycastHit hit;
-    private Camera cam;
+    public Camera cam;
 
     IEnumerator SpawnCubes()
     {
@@ -65,7 +64,6 @@ public class M : MonoBehaviour
         gameActive = true;
         touchPressAction = PlayerInput.actions["TouchPress"];
         touchPosAction = PlayerInput.actions["TouchPos"];
-        touchPhaseAction = PlayerInput.actions["TouchPhase"];
         score = 0;
         StartCoroutine(SpawnCubes());
     }
@@ -73,33 +71,36 @@ public class M : MonoBehaviour
 
     void Update()
     {
+        
 
-        if (!touchPressAction.WasPerformedThisFrame())
+        if (touchPressAction.WasPerformedThisFrame())
         {
-            return;
-        }
-
-        touchPos = touchPosAction.ReadValue<Vector2>();
-        Ray ray = cam.ScreenPointToRay(touchPos);
-        if (Physics.Raycast(ray, out hit))
-        {
-            GameObject hitObj = hit.collider.gameObject;
-            if (hitObj.tag == "Cube")
+            touchPos = touchPosAction.ReadValue<Vector2>();
+            Ray ray = cam.ScreenPointToRay(touchPos);
+            if (Physics.Raycast(ray, out hit))
             {
-                var clone = Instantiate(ParticleEffect, hitObj.transform.position, Quaternion.identity);
-                clone.transform.localScale = hitObj.transform.localScale;
-                Destroy(hitObj);
-                score = score + 10;
-                countText.text = "Score: " + score;
+                GameObject hitObj = hit.collider.gameObject;
+                if (hitObj.tag == "Cube")
+                {
+                    var clone = Instantiate(ParticleEffect, hitObj.transform.position, Quaternion.identity);
+                    clone.transform.localScale = hitObj.transform.localScale;
+                    Destroy(hitObj);
+                    score = score + 10;
+                    countText.text = "Score: " + score;
+                }
             }
         }
 
+
         if (gameActive)
         {
-            timeLeft -= Time.deltaTime;
-            timerText.text = "Time: " + Mathf.CeilToInt(timeLeft);
-
-            if (timeLeft <= 0)
+            if (timeLeft > 0)
+            {
+                timeLeft -= Time.deltaTime;
+                timerText.text = "Time: " + Mathf.CeilToInt(timeLeft);
+               
+            }
+            else
             {
                 EndGame();
             }
