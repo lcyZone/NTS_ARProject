@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 
@@ -75,5 +76,17 @@ public class M : MonoBehaviour
             cube.GetComponent<MeshRenderer>().material = randomMaterial;
         }
     }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void Retry()
+    {
+        SceneManager.LoadScene("AR Scene 2");
+    }
+
+
 
 }
