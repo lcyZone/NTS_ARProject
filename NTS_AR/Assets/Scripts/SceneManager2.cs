@@ -21,10 +21,10 @@ public class M : MonoBehaviour
     public List<Material> Materials;
     [SerializeField] private TMP_Text countText;
     private int score;
-    public float spawnInterval = 3f; 
+    public float spawnInterval = 2.5f; 
     private bool gameActive = true;
     public GameObject gameOverPanel;
-    private float timeLeft = 30f;
+    private float timeLeft = 60f;
     public TMP_Text timerText;
     public TMP_Text Rank;
     public ARPlaneManager arPlaneManager;
@@ -32,6 +32,9 @@ public class M : MonoBehaviour
     private Vector2 touchPos;
     private RaycastHit hit;
     public Camera cam;
+    public TMP_Text scoret;
+    public AudioSource audioSource;
+    public AudioClip destroySound;
 
     IEnumerator SpawnCubes()
     {
@@ -54,7 +57,12 @@ public class M : MonoBehaviour
         Vector3 spawnPosition = randomPlane.transform.position;
         spawnPosition.y += 0.05f; 
 
-        Instantiate(PrefabToInstantiate, spawnPosition, Quaternion.identity);
+        GameObject newCube = Instantiate(PrefabToInstantiate, spawnPosition, Quaternion.identity);
+        if (Materials.Count > 0)
+        {
+            Material randomMaterial = Materials[Random.Range(0, Materials.Count)];
+            newCube.GetComponent<Renderer>().material = randomMaterial;
+        }
     }
 
 
@@ -84,6 +92,10 @@ public class M : MonoBehaviour
                 {
                     var clone = Instantiate(ParticleEffect, hitObj.transform.position, Quaternion.identity);
                     clone.transform.localScale = hitObj.transform.localScale;
+                    if (audioSource != null && destroySound != null)
+                    {
+                        audioSource.PlayOneShot(destroySound);
+                    }
                     Destroy(hitObj);
                     score = score + 10;
                     countText.text = "Score: " + score;
@@ -118,15 +130,15 @@ public class M : MonoBehaviour
         {
             Rank.text = "youre pretty bad...";
         }
-        else if (score >50  && score <= 70)
+        else if (score >50  && score <= 100)
         {
             Rank.text = "not bad";
         }
-        else if (score > 70 && score <= 90)
+        else if (score > 100 && score <= 150)
         {
             Rank.text = "youre good!";
         }
-        else if (score > 90 && score < 100)
+        else if (score > 150 && score < 200)
         {
             Rank.text = "Amazing !!!";
         }
@@ -134,6 +146,7 @@ public class M : MonoBehaviour
         {
             Rank.text = "You are THE block destroyer.";
         }
+        scoret.text = "You're Score : " + score;
         gameOverPanel.SetActive(true);
     }
 
